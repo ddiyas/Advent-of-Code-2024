@@ -2,23 +2,35 @@ with open("Day 4\input.txt") as file:
     letters = [list(line.strip()) for line in file]
 
 xmas_count = 0
-xmas = "XMAS"
-directions = [(0, 1), (0, -1), (-1, 0), (1, 0), (-1, 1), (1, 1), (-1, -1), (1, -1)]
+directions = [(-1, 1), (1, 1)]
 visited = set()
 
 for i in range(len(letters)):
     for j in range(len(letters[i])):
-        if letters[i][j] == xmas[0] and (i, j) not in visited:
+        if letters[i][j] == "A" and (i, j) not in visited:
+            match = True
             for x, y in directions:
-                if all(
-                    0 <= i + letter_index * x < len(letters)
-                    and 0 <= j + letter_index * y < len(letters[i])
-                    and letters[i + (letter_index * x)][j + (letter_index * y)]
-                    == xmas[letter_index]
-                    for letter_index in range(1, len(xmas))
+                ni, nj = i + x, j + y
+                pi, pj = i - x, j - y
+                if (
+                    0 <= ni < len(letters)
+                    and 0 <= nj < len(letters[i])
+                    and 0 <= pi < len(letters)
+                    and 0 <= pj < len(letters[i])
+                    and letters[ni][nj] in {"M", "S"}
+                    and letters[pi][pj] in {"M", "S"}
+                    and letters[ni][nj] != letters[pi][pj]
                 ):
-                    xmas_count += 1
-                    for k in range(len(xmas)):
-                        visited.add((i + k * x, j + k * y))
+                    continue
+                else:
+                    match = False
+                    break
+
+            if match:
+                xmas_count += 1
+                visited.add((i, j))
+                for x, y in directions:
+                    visited.add((i + x, j + y))
+                    visited.add((i - x, j - y))
 
 print(xmas_count)
