@@ -10,16 +10,23 @@ sum = 0
 with open("Day 5\input_pages.txt") as file:
     for line in file:
         pages = list(map(int, list(line.split(","))))
-        valid = True
+        corrected = False
 
-        for i, page in enumerate(pages):
-            for n in rules.get(page, []):
-                if n in pages[:i]:
-                    valid = False
-                    break
-            if not valid:
+        while True:
+            valid = True
+            for i, page in enumerate(pages):
+                for n in rules.get(page, []):
+                    if n in pages[:i]:
+                        corrected = True
+                        valid = False
+                        pages[i], pages[pages.index(n)] = (
+                            pages[pages.index(n)],
+                            pages[i],
+                        )
+            if valid:
                 break
-        if valid:
+
+        if corrected:
             sum += pages[len(pages) // 2]
 
 print(sum)
